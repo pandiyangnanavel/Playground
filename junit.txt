@@ -1,0 +1,73 @@
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
+import java.util.Date;
+
+class DateUtilTest {
+
+    @Test
+    void testConvertStringDateToDifferentStringDate_validConversion() {
+        String originalDateStr = "2024-12-30";
+        String fromFormat = "yyyy-MM-dd";
+        String toFormat = "MM/dd/yyyy";
+        String logId = "12345";
+
+        // Expected output
+        String expected = "12/30/2024";
+
+        // Call the method
+        String result = DateUtil.convertStringDateToDifferentStringDate(originalDateStr, fromFormat, toFormat, logId);
+
+        // Verify the result
+        assertEquals(expected, result, "Date should be converted correctly.");
+    }
+
+    @Test
+    void testConvertStringDateToDifferentStringDate_invalidDateFormat() {
+        String originalDateStr = "30-12-2024"; // Invalid format for fromFormat
+        String fromFormat = "yyyy-MM-dd";
+        String toFormat = "MM/dd/yyyy";
+        String logId = "12345";
+
+        // Call the method
+        String result = DateUtil.convertStringDateToDifferentStringDate(originalDateStr, fromFormat, toFormat, logId);
+
+        // Verify the result
+        assertEquals("", result, "Invalid date format should return an empty string.");
+    }
+
+    @Test
+    void testConvertStringDateToDifferentStringDate_nullOriginalDateStr() {
+        String originalDateStr = null;
+        String fromFormat = "yyyy-MM-dd";
+        String toFormat = "MM/dd/yyyy";
+        String logId = "12345";
+
+        // Call the method
+        String result = DateUtil.convertStringDateToDifferentStringDate(originalDateStr, fromFormat, toFormat, logId);
+
+        // Verify the result
+        assertEquals("", result, "Null originalDateStr should return an empty string.");
+    }
+
+    @Test
+    void testConvertStringDateToDifferentStringDate_parseException() {
+        String originalDateStr = "invalid-date"; // Invalid date input
+        String fromFormat = "yyyy-MM-dd";
+        String toFormat = "MM/dd/yyyy";
+        String logId = "12345";
+
+        // Mock LogUtil for this test
+        LogUtil loggerMock = Mockito.mock(LogUtil.class);
+        Mockito.doNothing().when(loggerMock).logDebug(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+
+        // Call the method
+        String result = DateUtil.convertStringDateToDifferentStringDate(originalDateStr, fromFormat, toFormat, logId);
+
+        // Verify the result
+        assertEquals("", result, "ParseException should return an empty string.");
+    }
+}

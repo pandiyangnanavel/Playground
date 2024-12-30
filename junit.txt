@@ -4,7 +4,6 @@ import org.mockito.Mockito;
 
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
-import java.util.Date;
 
 class DateUtilTest {
 
@@ -32,11 +31,23 @@ class DateUtilTest {
         String toFormat = "MM/dd/yyyy";
         String logId = "12345";
 
+        // Mock LoggerUtils
+        LoggerUtils loggerMock = Mockito.mock(LoggerUtils.class);
+        Mockito.doNothing().when(loggerMock).logDebugMessage(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+
         // Call the method
         String result = DateUtil.convertStringDateToDifferentStringDate(originalDateStr, fromFormat, toFormat, logId);
 
         // Verify the result
         assertEquals("", result, "Invalid date format should return an empty string.");
+
+        // Verify logging
+        Mockito.verify(loggerMock, Mockito.times(1)).logDebugMessage(
+                Mockito.any(), 
+                Mockito.eq(Constants.PREMIGRATION_MDN_INQUIRY),
+                Mockito.contains(Constants.UNABLE_TO_PARSE_DATE_ERROR_MSG), 
+                Mockito.eq(logId)
+        );
     }
 
     @Test
@@ -60,14 +71,22 @@ class DateUtilTest {
         String toFormat = "MM/dd/yyyy";
         String logId = "12345";
 
-        // Mock LogUtil for this test
-        LogUtil loggerMock = Mockito.mock(LogUtil.class);
-        Mockito.doNothing().when(loggerMock).logDebug(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        // Mock LoggerUtils
+        LoggerUtils loggerMock = Mockito.mock(LoggerUtils.class);
+        Mockito.doNothing().when(loggerMock).logDebugMessage(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 
         // Call the method
         String result = DateUtil.convertStringDateToDifferentStringDate(originalDateStr, fromFormat, toFormat, logId);
 
         // Verify the result
         assertEquals("", result, "ParseException should return an empty string.");
+
+        // Verify logging
+        Mockito.verify(loggerMock, Mockito.times(1)).logDebugMessage(
+                Mockito.any(),
+                Mockito.eq(Constants.PREMIGRATION_MDN_INQUIRY),
+                Mockito.contains(Constants.UNABLE_TO_PARSE_DATE_ERROR_MSG),
+                Mockito.eq(logId)
+        );
     }
 }
